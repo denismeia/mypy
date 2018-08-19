@@ -11,14 +11,14 @@ configurar conta
 
 	git config --global user.name "denismeia"
 
-	git config --global user.email "denismeia@icloud.com"
+	git config --global user.email "denismeia@gmail.com"
 
 
 Vai no folder do projeto
 
 	git init
 
-	git remote add origin https://denismeia@bitbucket.org/denismeia/mypy.git
+	git remote add origin https://github.com/denismeia/mypy.git
 
 
 Agora vamos atualizar
