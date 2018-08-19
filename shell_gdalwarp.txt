@@ -1,0 +1,35 @@
+for f in *.tif; do
+	gdalwarp -overwrite -s_srs EPSG:2163 -t_srs EPSG:4326 -co COMPRESS=DEFLATE -co PREDICTOR=1 -co ZLEVEL=9 -multi -dstnodata -32768 -of GTiff $f t$f
+done
+
+#ndvi 0.00225
+
+for i in *.tif; do gdalwarp -projwin -57.4033924451 -22.4792509917 -47.7399766502 -29.9656213892 -tr 0.00225 0.00225 -co COMPRESS=DEFLATE -co PREDICTOR=1 -co ZLEVEL=9 -of GTiff $i c$i; done
+
+gdal_translate -projwin -57.4033924451 -22.4792509917 -47.7399766502 -29.9656213892 -of GTiff /home/denis/Downloads/qqcoisa/c2001-017.tif asgasgd
+
+for f in *.tif; do gdalwarp -overwrite -s_srs EPSG:2163 -t_srs EPSG:4326 -co COMPRESS=DEFLATE -co PREDICTOR=1 -co ZLEVEL=9 -multi -dstnodata -32768 -of GTiff $f t$f; done
+
+for f in *.tif; do gdalwarp -overwrite -ot Int16 -co COMPRESS=DEFLATE -co PREDICTOR=1 -co ZLEVEL=9 -multi -dstnodata 0 -of GTiff $f c$f; done
+
+#no QGIS pode usar o raster clipper pra pegar o extent.
+gdal_merge.py -ul_lr -104.0481561260200607 45.5989999955068441 -87.7986561260200631 40.0009999955068452 -n -2 -a_nodata -2 -co COMPRESS=DEFLATE -co PREDICTOR=2 -co ZLEVEL=9 -of GTiff -o /media/denis/seagate/MODIS/MYD09Q1/h10_11v04/CULIAO.tif /media/denis/seagate/MODIS/MYD09Q1/h11v04/ndvi/2002-07-04.tif /media/denis/seagate/MODIS/MYD09Q1/h10v04/ndvi/2002-07-04.tif
+
+for f in vpd*.tif; do gdalwarp -overwrite  -co COMPRESS=DEFLATE -co PREDICTOR=1 -co ZLEVEL=9 -multi -dstnodata -32768 -of GTiff $f t$f; done
+
+######################################################
+##CALCULATIONS or HOW TO REDUCE NDVI to INTEGER DATA
+######################################################
+
+for f in *.tif; do gdal_calc.py -A $f --outfile=tt$f --calc="A*10000" --NoDataValue=-20000 --type="Int16" --co='COMPRESS=DEFLATE' --co='PREDICTOR=1' --co='ZLEVEL=9'; done
+
+## or create a folder "/usa" and have fun in a single shot
+for f in *.tif; do gdal_calc.py -A $f --outfile=../usa/$f --calc="A*10000" --NoDataValue=-20000 --type="Int16" --co='COMPRESS=DEFLATE' --co='PREDICTOR=1' --co='ZLEVEL=9'; done
+
+gdal_merge.py -ul_lr -104.0481561260200607 45.5989999955068441 -87.7986561260200631 40.0009999955068452 -n 0 -a_nodata 65535 -co COMPRESS=DEFLATE -co PREDICTOR=2 -co ZLEVEL=9 -of GTiff -o /media/denis/seagate/PB/MODIS/myd11a2/A2002185.tif /media/denis/seagate/PB/MODIS/myd11a2/1309/prm/MYD11A2.A2002185.LST_Day_1km.tif /media/denis/seagate/PB/MODIS/myd11a2/1310/prm/MYD11A2.A2002185.LST_Day_1km.tif
+
+
+for f in *.tif; do gdalwarp -ot Float32 -s_srs "+proj=sinu +lon_0=0 +x_0=0 +y_0=0 +a=6371007.181 +b=6371007.181 +units=m +no_defs" -t_srs EPSG:4326 -dstnodata -2 -r near -of GTiff -te -48.7551 " -18.3494" " -34.3925" -1.0445 -co COMPRESS=DEFLATE -co PREDICTOR=2 -co ZLEVEL=9 -wo OPTIMIZE_SIZE=TRUE $f r$f; done
+
+#PRECIPITATION NeB
+for f in *.tif; do gdalwarp -ot Int16 -srcnodata -9999 -dstnodata -9999 -r near -of GTiff -te -48.7551 " -18.3494" " -34.3925" -1.0445 -co COMPRESS=DEFLATE -co PREDICTOR=2 -co ZLEVEL=9 -wo OPTIMIZE_SIZE=TRUE $f r$f; done
