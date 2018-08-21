@@ -3,9 +3,10 @@
     THIS IS THE STABLE (lol) VERSION
     PYTHON 3, please!
 
-    This is my shit, I know how to use it.
+    
 
-    Fxs  :
+    f(x)s  :
+    		rastastats
     		ws_anomalies
             fenologia
     		partial_corr
@@ -52,6 +53,8 @@ def rastastats(files,shp,column,stat,dateformat="%Y-%j"):
             or with nodata specified : 'nmean', 'nmedian' or 'ncount'
                 and specify the nodata value.
         dateformat (str): the images filename date format
+
+        ... I still have to find a smart way to pass nodata value to the f(x)
     '''    
 
     import pandas as pd
@@ -111,7 +114,7 @@ def rastastats(files,shp,column,stat,dateformat="%Y-%j"):
         df['date'] = pd.to_datetime(df.index,format=dateformat)
     except:
         df['date'] = pd.to_datetime(df.index,format="%Y-%m-%d")
-        print('Date format converted, lazy bastard! \n')
+        print('Date format converted. \n')
         
     df.index = df['date']
     df.drop(labels='date',axis=1,inplace=True)
@@ -504,7 +507,7 @@ def mk_test(x, alpha = 0.05):
 
     return l#trend, h, p, z
 
-def shemale(taime=0):
+def mailme(taime=0):
     '''
         This function just sends me and email when I run it.
         It is good to run after a long process finishes, so I can
@@ -674,8 +677,11 @@ def wavg(meta,var,mode,criterion,pfp=True):
 def statsaga(folder,shapein,allowance=0.8):
     '''
         developer: Denis Mariano
-            email: denismeia@gmail.com
+            email: denismeia@icloud.com
         last modified: May, 25, 2016
+		
+		## THIS IS REALLY DEPRECATED!!! not using it, 
+			I'm just keeping it for future reference"
 
         This script uses saga_cmd to compute raster stats for polygons.
         Currently, I'm calculating only the MEAN, however, I might make it more
@@ -863,6 +869,11 @@ def anomalies(folder,di=4,df=7,deltemp=False):
 
 
 def cumspan(quantidade,anoinicial,anofinal,diainicial,diafinal,folderin,folderout):
+    '''
+		The f(x) needs a better name
+		and proper docstring, although this might be deprecated.
+    '''
+
     for ano in range(anoinicial,anofinal+1):
         import os
         import xuleta
@@ -899,39 +910,6 @@ def dnorm(v):
     v = np.asarray(v, dtype=float)
     nor = (v-np.nanmin(v))/(np.nanmax(v)-np.nanmin(v))
     return nor
-
-'''
-def rastastats(folder,shape,out,stats):
-        ''''''
-       folder: Folder where your image files are stored. (with bar / in the end)
-       shape: Your shapefile
-       out: output -> folder + file.csv
-       stats: 'mean', 'std' or any stats,
-              'mean std' -> combine up to 2 stats
-        ''''''
-    import pandas, rasterstats, xuleta
-    lista = xuleta.listfiles(folder)
-    dfs = []
-    names = ['regiao']
-    for i in lista:
-        if len(stats) > 7:
-            names.append(stats.split(' ')[0]+'_'+i[:-4])
-            names.append(stats.split(' ')[1]+'_'+i[:-4])
-        else:
-            names.append(stats+'_'+i[:-4])
-        y = rasterstats.zonal_stats(shape,folder + i, stats=stats, copy_properties=True)
-        dfs.append(pandas.DataFrame(y))
-        y = None
-        print 'Calculating stats for : '+i
-    print 'Creating table at '+out
-    dados = pandas.concat(dfs, join='outer', axis=1)
-    dados2 = dados.T.drop_duplicates().T.drop('__fid__', 1)
-    dados2.columns = names
-    dados2 = dados2.T
-    dados2.to_csv(out, sep=',')
-    print 'Done!'
-    return dados
-'''
 
 
 def dbf2csv(filename):

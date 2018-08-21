@@ -10,7 +10,7 @@ This script combines MODIS TERRA and AQUA images. The methodology is described a
 
 @authors: 
 Denis Araujo Mariano
-denis.mariano@usp.br
+denismeia@icloud.com
 
 William Foschiera
 wfoschiera@gmail.com
